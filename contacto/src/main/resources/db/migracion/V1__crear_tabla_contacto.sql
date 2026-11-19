@@ -8,4 +8,4 @@ CREATE TABLE contacto (
     PRIMARY KEY (id)
 );
 
---CREATE DATABASE contacto; en LARAGON
+--CREATE DATABASE db_contacto; en LARAGON
