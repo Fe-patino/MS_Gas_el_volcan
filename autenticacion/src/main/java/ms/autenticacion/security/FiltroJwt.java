@@ -1,31 +1,5 @@
 package ms.autenticacion.security;
 
-import java.net.http.HttpResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.http.HttpServletRequest;
-
-@Component 
-public class FiltroJwt extends OncePerRequestFilter{
-
-    @Autowired 
-    private JwtUtil jwtUtil;
-
-    @Override 
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpResponse response,
-                                    FilterChain filterChain)
-
-
-    
-    
-}
-package ms.autenticacion.security;
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
