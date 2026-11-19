@@ -50,4 +50,4 @@ public class NovedadController {
         service.eliminar(id);
         return ResponseEntity.noContent().build();
     }
-} 
+}
