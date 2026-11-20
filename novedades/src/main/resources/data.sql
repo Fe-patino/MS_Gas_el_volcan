@@ -1,0 +1,4 @@
+INSERT IGNORE INTO novedad (id, titulo, descripcion, fecha_publicacion, imagen) VALUES
+(1, 'Nuevo horario de atención', 'A partir de diciembre extendemos nuestro horario de atención hasta las 21:00 horas para mejor servicio.', '2026-11-01', '/img/novedades1.png'),
+(2, 'Consejos de seguridad para el gas', 'Recuerda siempre verificar las conexiones de gas antes de usar tus artefactos. La seguridad de tu familia es lo primero.', '2026-11-10', '/img/novedades2.png'),
+(3, 'Nuevos cilindros disponibles', 'Ya tenemos disponibles cilindros de 15kg con nueva válvula de seguridad mejorada.', '2026-11-15', '/img/balongas.png');
