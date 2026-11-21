@@ -12,7 +12,7 @@ public class ConfiguracionCors implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")                          // Aplica a todos los endpoints
                 .allowedOrigins("http://localhost:5173")    // URL del frontend React
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Métodos HTTP permitidos
+                .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS") // Métodos HTTP permitidos
                 .allowedHeaders("*")                        // Permite todos los headers (incluido Authorization)
                 .allowCredentials(true);                    // Permite envío de cookies y tokens
     }
