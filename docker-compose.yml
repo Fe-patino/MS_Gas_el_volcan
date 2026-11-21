@@ -1,0 +1,122 @@
+# Gas El Volcán – todos los microservicios + MySQL (+ frontend opcional)
+#
+#   Solo backend:            docker compose up --build
+#   Backend + frontend:      docker compose --profile full up --build
+#   Apagar:                  docker compose down        (agrega -v para borrar también las bases de datos)
+#
+# Los puertos publicados son los mismos que usa el frontend (localhost:8081, 8082, ...), así que
+# no hay que cambiar ninguna URL.
+
+x-servicio-java: &servicio-java
+  restart: on-failure
+  depends_on:
+    mysql:
+      condition: service_healthy
+    eureka-server:
+      condition: service_started
+  environment: &entorno-comun
+    SPRING_DATASOURCE_USERNAME: root
+    SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+    # Los servicios se registran en Eureka por el nombre del contenedor
+    EUREKA_URL: http://eureka-server:8761/eureka
+    # Secreto del JWT: debe ser el mismo en autenticacion, contacto y pagos (mínimo 32 caracteres)
+    JWT_SECRETO: ${JWT_SECRETO:-gasElVolcanClaveSecreta2024XYZ123456789}
+    JAVA_OPTS: -Xmx300m
+    TZ: America/Santiago
+
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: gv-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      TZ: America/Santiago
+    ports:
+      - "${MYSQL_PORT:-3307}:3306"
+    volumes:
+      - mysql-datos:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+
+  eureka-server:
+    build: ./eureka-server
+    container_name: gv-eureka
+    restart: on-failure
+    environment:
+      JAVA_OPTS: -Xmx200m
+    ports:
+      - "8761:8761"
+
+  productos:
+    <<: *servicio-java
+    build: ./productos
+    container_name: gv-productos
+    environment:
+      <<: *entorno-comun
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/db_productos?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Santiago
+    ports:
+      - "8081:8081"
+
+  autenticacion:
+    <<: *servicio-java
+    build: ./autenticacion
+    container_name: gv-autenticacion
+    environment:
+      <<: *entorno-comun
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/db_autenticacion?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Santiago
+    ports:
+      - "8082:8082"
+
+  contacto:
+    <<: *servicio-java
+    build: ./contacto
+    container_name: gv-contacto
+    environment:
+      <<: *entorno-comun
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/db_contacto?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Santiago
+    ports:
+      - "8083:8083"
+
+  novedades:
+    <<: *servicio-java
+    build: ./novedades
+    container_name: gv-novedades
+    environment:
+      <<: *entorno-comun
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/db_novedades?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Santiago
+    ports:
+      - "8084:8084"
+
+  pagos:
+    <<: *servicio-java
+    build: ./pagos
+    container_name: gv-pagos
+    environment:
+      <<: *entorno-comun
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/db_pagos?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Santiago
+    ports:
+      - "8085:8085"
+
+  # Frontend React (nginx). Solo se levanta con --profile full y necesita la carpeta del frontend al lado de esta.
+  frontend:
+    profiles: ["full"]
+    build: ${FRONTEND_DIR:-../Proyecto_React-main}
+    container_name: gv-frontend
+    restart: unless-stopped
+    depends_on:
+      - productos
+      - autenticacion
+      - contacto
+      - novedades
+      - pagos
+    ports:
+      # Se publica en 5173 porque los microservicios solo aceptan CORS desde http://localhost:5173
+      - "5173:80"
+
+volumes:
+  mysql-datos:
