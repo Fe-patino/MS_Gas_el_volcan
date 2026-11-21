@@ -4,6 +4,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
+import java.nio.charset.StandardCharsets;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -12,14 +14,15 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    // Clave secreta para firmar el token (mínimo 256 bits)
-    private static final String SECRETO = "gasElVolcanClaveSecreta2024XYZ123456789";
+    // Clave secreta para firmar el token (mínimo 256 bits). Viene de la propiedad jwt.secreto
+    @Value("${jwt.secreto}")
+    private String secreto;
 
     // Tiempo de expiración: 24 horas en milisegundos
     private static final long EXPIRACION = 86400000;
 
     private SecretKey obtenerClave() {
-        return Keys.hmacShaKeyFor(SECRETO.getBytes());
+        return Keys.hmacShaKeyFor(secreto.getBytes(StandardCharsets.UTF_8));
     }
 
     // Generar token JWT con correo y rol del usuario
