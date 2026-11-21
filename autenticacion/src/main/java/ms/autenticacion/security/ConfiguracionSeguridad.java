@@ -37,6 +37,8 @@ public class ConfiguracionSeguridad {
                     "/swagger-ui/**",
                     "/v3/api-docs/**"
                 ).permitAll()
+                // Gestión de usuarios: solo el administrador (el rol viene en el JWT)
+                .requestMatchers("/api/auth/usuarios", "/api/auth/usuarios/**").hasRole("ADMINISTRADOR")
                 // Todo lo demás requiere autenticación
                 .anyRequest().authenticated()
             )
