@@ -1,5 +1,6 @@
 package ms.autenticacion.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,6 +20,8 @@ public class Usuario {
     @Column(nullable = false, unique = true)
     private String correo;
 
+    // Nunca se envía al frontend (ni siquiera encriptada)
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
 
