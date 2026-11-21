@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -24,7 +25,7 @@ public class ContactoController {
     // POST /api/contactos - Recibe un mensaje del formulario de contacto
     @PostMapping
     @Operation(summary = "Enviar mensaje de contacto")
-    public ResponseEntity<Contacto> guardar(@RequestBody Contacto contacto) {
+    public ResponseEntity<Contacto> guardar(@Valid @RequestBody Contacto contacto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.guardar(contacto));
     }
 
