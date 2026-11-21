@@ -24,7 +24,7 @@ public class Producto {
     private Double precio;
 
     @Column
-    private Double precioComercial;
+    private Double precioComercial = 0.0;
 
     @Column(nullable = false)
     private Integer stock;
@@ -33,10 +33,10 @@ public class Producto {
     private String descripcion;
 
     @Column(length = 500)
-    private String descripcionBreve;
+    private String descripcionBreve = "";
 
     @Column(length = 1000)
-    private String descripcionCompleta;
+    private String descripcionCompleta = "";
 
     @Column
     private String imagen;
