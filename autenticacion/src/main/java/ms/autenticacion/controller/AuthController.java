@@ -54,6 +54,19 @@ public class AuthController {
     public ResponseEntity<Usuario> crearUsuario(@RequestBody SolicitudRegistro solicitud) {
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.crearUsuario(solicitud));
     }
+    // PUT /api/auth/password - Cambiar contraseña del usuario autenticado
+    @PutMapping("/password")
+    @Operation(summary = "Cambiar contraseña del usuario autenticado")
+    public ResponseEntity<Void> cambiarPassword(
+            @RequestBody java.util.Map<String, String> body,
+            Authentication autenticacion) {
+        usuarioService.cambiarPassword(
+                autenticacion.getName(),
+                body.get("passwordActual"),
+                body.get("passwordNueva")
+        );
+    return ResponseEntity.ok().build();
+}
 
     // DELETE /api/auth/usuarios/{id} - Eliminar usuario por ID (solo ADMINISTRADOR)
     @DeleteMapping("/usuarios/{id}")
