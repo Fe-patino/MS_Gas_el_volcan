@@ -48,6 +48,18 @@ public class UsuarioService {
         }
         return guardar(solicitud, rol);
     }
+    public void cambiarPassword(String correo, String passwordActual, String passwordNueva) {
+    Usuario usuario = usuarioRepository.findByCorreo(correo)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+    if (!encriptador.matches(passwordActual, usuario.getPassword())) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La contraseña actual es incorrecta");
+    }
+    if (passwordNueva == null || passwordNueva.length() < 4 || passwordNueva.length() > 20) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La nueva contraseña debe tener entre 4 y 20 caracteres");
+    }
+    usuario.setPassword(encriptador.encode(passwordNueva));
+    usuarioRepository.save(usuario);
+}
 
     // Eliminar un usuario (404 si no existe). Un administrador no puede eliminarse a sí mismo.
     public void eliminar(Long id, String correoQuienElimina) {
